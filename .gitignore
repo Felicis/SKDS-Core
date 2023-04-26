@@ -7,3 +7,4 @@ lib
 .settings
 .vscode
 gradle.properties
+.idea

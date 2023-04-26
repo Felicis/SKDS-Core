@@ -1,6 +1,6 @@
 package net.skds.core.mixins.multithreading;
 
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.Semaphore;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -9,17 +9,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.At;
 
-import net.minecraft.util.palette.PalettedContainer;
+import net.minecraft.world.level.chunk.PalettedContainer;
 
 @Mixin(value = { PalettedContainer.class })
 public class PalettedContainerMixin<T> {
 
 	@Shadow
-	private final ReentrantLock lock = new ReentrantLock();
+	private final Semaphore lock = new Semaphore(1);
 
 	@Inject(method = "acquire", at = @At(value = "HEAD"), cancellable = true)
 	public void acquire(CallbackInfo ci) {
-		lock.lock();
+		lock.acquireUninterruptibly();
 		ci.cancel();
 	}
 
@@ -33,9 +33,9 @@ public class PalettedContainerMixin<T> {
 	@Inject(method = "getAndSet", at = @At(value = "HEAD"), cancellable = true)
 	public synchronized void getAndSet(int x, int y, int z, T state, CallbackInfoReturnable<T> ci) {
 	
-		lock.lock();
+		lock.acquireUninterruptibly();
 		T t = this.getAndSet(getIndex(x, y, z), state);
-		lock.unlock();
+		lock.release();
 		ci.setReturnValue(t);
 	}
 	//=============================

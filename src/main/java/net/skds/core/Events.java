@@ -1,7 +1,7 @@
 package net.skds.core;
 
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.event.TickEvent.WorldTickEvent;
@@ -19,22 +19,22 @@ public class Events {
     @SubscribeEvent
     public void onWorldUnload(WorldEvent.Unload e) {
 
-        World w = (World) e.getWorld();
+        Level w = (Level) e.getWorld();
         WWSGlobal wwsg = ((IWorldExtended) w).getWWS();
         wwsg.unloadWorld(w);
         if (!w.isClientSide) {
-            BlockUpdataer.onWorldUnload((ServerWorld) e.getWorld());
+            BlockUpdataer.onWorldUnload((ServerLevel) e.getWorld());
         }
     }
 
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load e) {
 
-        World w = (World) e.getWorld();
+        Level w = (Level) e.getWorld();
         ((IWorldExtended) w).addWWS();
        // WWSGlobal.loadWorld(w);
         if (!w.isClientSide) {
-            BlockUpdataer.onWorldLoad((ServerWorld) w);
+            BlockUpdataer.onWorldLoad((ServerLevel) w);
         }
     }
 
@@ -42,7 +42,7 @@ public class Events {
     public void tick(WorldTickEvent event) {
 
         boolean in = event.phase == Phase.START;
-        World w = event.world;
+        Level w = event.world;
         if (in) {
             //System.out.println("W I ========================");
             WWSGlobal wwsg = ((IWorldExtended) w).getWWS();

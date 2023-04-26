@@ -8,27 +8,27 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.chunk.IChunk;
-import net.minecraft.world.server.ChunkHolder;
-import net.minecraft.world.server.ServerChunkProvider;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.server.level.ServerLevel;
 import net.skds.core.api.multithreading.ISKDSThread;
 import net.skds.core.api.IServerChunkProvider;
 
-@Mixin(value = { ServerChunkProvider.class })
+@Mixin(value = { ServerChunkCache.class })
 public abstract class ServerChunkProviderMixin implements IServerChunkProvider {
 
     @Final
     @Shadow
-    public ServerWorld level;
+    public ServerLevel level;
     @Final
     @Shadow
     private Thread mainThread;
 
-    public IChunk getCustomChunk(long l) {
+    public ChunkAccess getCustomChunk(long l) {
         ChunkHolder chunkHolder = this.getVisibleChunkIfPresent(l);
         if (chunkHolder == null) {
             return null;
@@ -47,7 +47,7 @@ public abstract class ServerChunkProviderMixin implements IServerChunkProvider {
 	}
 
     @Inject(method = "storeInCache", at = @At(value = "HEAD"), cancellable = true)
-    private void swapp(long l, IChunk ic, ChunkStatus cs, CallbackInfo ci) {
+    private void swapp(long l, ChunkAccess ic, ChunkStatus cs, CallbackInfo ci) {
         if (Thread.currentThread() != mainThread) {
             ci.cancel();
         }

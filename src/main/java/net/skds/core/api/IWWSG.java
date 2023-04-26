@@ -1,6 +1,6 @@
 package net.skds.core.api;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 public interface IWWSG {
 	public IWWS getTyped(Class<? extends IWWS> type);

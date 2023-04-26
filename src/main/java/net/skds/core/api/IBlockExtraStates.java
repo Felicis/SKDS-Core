@@ -1,11 +1,11 @@
 package net.skds.core.api;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.state.StateContainer;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 
 public interface IBlockExtraStates {
 	
-	default void customStatesRegister(Block b, StateContainer.Builder<Block, BlockState> builder) {		
+	default void customStatesRegister(Block b, StateDefinition.Builder<Block, BlockState> builder) {		
 	}
 }

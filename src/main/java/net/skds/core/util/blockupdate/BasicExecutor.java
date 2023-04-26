@@ -4,20 +4,20 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.ChunkSection;
-import net.minecraft.world.chunk.IChunk;
-import net.minecraft.world.server.ServerChunkProvider;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import net.skds.core.network.DebugPacket;
 import net.skds.core.network.PacketHandler;
 import net.skds.core.api.IServerChunkProvider;
@@ -26,19 +26,19 @@ import net.skds.core.api.IWWS;
 public abstract class BasicExecutor implements Runnable {
 
 	protected final BlockState nullreturnstate = Blocks.BARRIER.defaultBlockState();
-	protected final ServerWorld w;
+	protected final ServerLevel w;
 	protected final IWWS owner;
-	protected final BiConsumer<UpdateTask, ServerWorld> action;
+	protected final BiConsumer<UpdateTask, ServerLevel> action;
 	protected Set<BlockPos> banPoses = new HashSet<>();
 	protected boolean cancel = false;
 
-	protected BasicExecutor(ServerWorld w, BiConsumer<UpdateTask, ServerWorld> action, IWWS owner) {
+	protected BasicExecutor(ServerLevel w, BiConsumer<UpdateTask, ServerLevel> action, IWWS owner) {
 		this.owner = owner;
 		this.w = w;
 		this.action = action;
 	}
 
-	protected abstract void applyAction(BlockPos pos, BlockState newState, BlockState oldState, ServerWorld w);
+	protected abstract void applyAction(BlockPos pos, BlockState newState, BlockState oldState, ServerLevel w);
 
 	protected BlockState setState(BlockPos pos, BlockState newState) {
 		/*
@@ -81,28 +81,28 @@ public abstract class BasicExecutor implements Runnable {
 		return oldState;
 	}
 
-	private IChunk chunkCash = null;
+	private ChunkAccess chunkCash = null;
 	private long chunkPosCash = 0;
 	private boolean newChunkCash = true;
 
-	protected IChunk getChunk(int blockX, int blockZ) {
+	protected ChunkAccess getChunk(int blockX, int blockZ) {
 		long lpos = ChunkPos.asLong(blockX >> 4, blockZ >> 4);
 		if (newChunkCash || lpos != chunkPosCash) {
 			newChunkCash = false;
-			ServerChunkProvider prov = (ServerChunkProvider) w.getChunkSource();
+			ServerChunkCache prov = (ServerChunkCache) w.getChunkSource();
 			chunkCash = ((IServerChunkProvider) prov).getCustomChunk(lpos);
 			chunkPosCash = lpos;
 		}
 		return chunkCash;
 	}
 
-	protected IChunk getChunk(BlockPos cPos) {
+	protected ChunkAccess getChunk(BlockPos cPos) {
 		// return w.getChunk(cPos);
 		return getChunk(cPos.getX(), cPos.getZ());
 	}
 
 	protected BlockState getBlockState(BlockPos pos) {
-		IChunk chunk = getChunk(pos);
+		ChunkAccess chunk = getChunk(pos);
 		if (chunk == null) {
 			cancel = true;
 			return nullreturnstate;
@@ -116,14 +116,14 @@ public abstract class BasicExecutor implements Runnable {
 	}
 
 	protected BlockState setFinBlockState(BlockPos pos, BlockState state) {
-		IChunk chunk = getChunk(pos);
-		if (!(chunk instanceof Chunk)) {
+		ChunkAccess chunk = getChunk(pos);
+		if (!(chunk instanceof LevelChunk)) {
 			return null;
 		}
-		ChunkSection[] chunksections = chunk.getSections();
-		ChunkSection sec = chunksections[pos.getY() >> 4];
+		LevelChunkSection[] chunksections = chunk.getSections();
+		LevelChunkSection sec = chunksections[pos.getY() >> 4];
 		if (sec == null) {
-			sec = new ChunkSection(pos.getY() >> 4 << 4);
+			sec = new LevelChunkSection(pos.getY() >> 4 << 4);
 			chunksections[pos.getY() >> 4] = sec;
 		}
 		BlockState setted = chunksections[pos.getY() >> 4].setBlockState(pos.getX() & 15, pos.getY() & 15,
@@ -138,12 +138,12 @@ public abstract class BasicExecutor implements Runnable {
 
 	// ============== ENTITY ================= //
 
-	protected TileEntity getTileEntity(BlockPos pos) {
-		IChunk ich = getChunk(pos);
-		TileEntity tileentity = null;
+	protected BlockEntity getTileEntity(BlockPos pos) {
+		ChunkAccess ich = getChunk(pos);
+		BlockEntity tileentity = null;
 
-		if (ich instanceof Chunk) {
-			tileentity = ((Chunk) getChunk(pos)).getBlockEntity(pos, Chunk.CreateEntityType.IMMEDIATE);
+		if (ich instanceof LevelChunk) {
+			tileentity = ((LevelChunk) getChunk(pos)).getBlockEntity(pos, LevelChunk.EntityCreationType.IMMEDIATE);
 		}
 
 		// if (tileentity == null) {

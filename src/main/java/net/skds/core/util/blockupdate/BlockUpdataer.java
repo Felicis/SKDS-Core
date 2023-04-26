@@ -5,10 +5,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.BiConsumer;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.skds.core.Events;
 import net.skds.core.SKDSCoreConfig;
 
@@ -117,14 +117,14 @@ public class BlockUpdataer {
 
     // private static Map<ServerWorld, ConcurrentHashMap<Long, UpdateTask>>
     // BLOCK_UPDATES_WORLDS = new HashMap<>();
-    private static Map<ServerWorld, ConcurrentLinkedQueue<UpdateTask>> BLOCK_UPDATES_WORLDS = new HashMap<>();
+    private static Map<ServerLevel, ConcurrentLinkedQueue<UpdateTask>> BLOCK_UPDATES_WORLDS = new HashMap<>();
 
-    public static void onWorldLoad(ServerWorld w) {
+    public static void onWorldLoad(ServerLevel w) {
         ConcurrentLinkedQueue<UpdateTask> map = new ConcurrentLinkedQueue<>();
         BLOCK_UPDATES_WORLDS.put(w, map);
     }
 
-    public static void onWorldUnload(ServerWorld w) {
+    public static void onWorldUnload(ServerLevel w) {
         BLOCK_UPDATES_WORLDS.remove(w);
         entitiesToAdd.forEach((e) -> {
             if (e.level == w) {
@@ -135,7 +135,7 @@ public class BlockUpdataer {
         });
     }
 
-    public static void addUpdate(ServerWorld w, BlockPos pos, BlockState newState, BlockState oldState, int flags, BiConsumer<UpdateTask, ServerWorld> action) {
+    public static void addUpdate(ServerLevel w, BlockPos pos, BlockState newState, BlockState oldState, int flags, BiConsumer<UpdateTask, ServerLevel> action) {
         if (newState == oldState) {
             return;
         }

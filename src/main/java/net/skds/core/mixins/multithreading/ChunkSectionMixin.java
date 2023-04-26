@@ -6,10 +6,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.world.chunk.ChunkSection;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 
-@Mixin(value = { ChunkSection.class })
+@Mixin(value = { LevelChunkSection.class })
 public class ChunkSectionMixin {
 
 	@Inject(method = "setBlockState", at = @At(value = "HEAD"), cancellable = true)

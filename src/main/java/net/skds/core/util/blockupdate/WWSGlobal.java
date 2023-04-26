@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.Set;
 
 import io.netty.util.internal.ConcurrentSet;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.skds.core.api.IWWS;
 import net.skds.core.api.IWWSG;
@@ -38,14 +38,14 @@ public class WWSGlobal implements IWWSG {
 
 	//private static ConcurrentSkipListSet<ITaskRunnable> TASKS = new ConcurrentSkipListSet<>(comp);
 
-	public final World world;
+	public final Level world;
 	private Set<BlockPos> players = new HashSet<>();
 	private Map<Class<? extends IWWS>, IWWS> WWS = new HashMap<>();
 
 	private ConcurrentSet<Long> banPos = new ConcurrentSet<>();
 	private ConcurrentSet<Long> banPosOld = new ConcurrentSet<>();
 
-	public WWSGlobal(World w) {
+	public WWSGlobal(Level w) {
 		world = w;
 		MinecraftForge.EVENT_BUS.post(new OnWWSAttachEvent(w, this));
 		INSTANCES.add(this);
@@ -86,9 +86,9 @@ public class WWSGlobal implements IWWSG {
 	}
 
 	private void updatePlayers() {
-		List<? extends PlayerEntity> playersss = world.players();
+		List<? extends Player> playersss = world.players();
 		Set<BlockPos> np = new HashSet<>();
-		for (PlayerEntity p : playersss) {
+		for (Player p : playersss) {
 			BlockPos pos = p.blockPosition();
 			np.add(pos);
 		}
@@ -112,7 +112,7 @@ public class WWSGlobal implements IWWSG {
 		return WWS.get(type);
 	}
 
-	public void unloadWorld(World w) {
+	public void unloadWorld(Level w) {
 		INSTANCES.remove(this);
 		stop();
 		//TASKS.forEach(task -> {

@@ -1,7 +1,7 @@
 package net.skds.core.api;
 
-import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.level.chunk.ChunkAccess;
 
 public interface IServerChunkProvider {
-    public IChunk getCustomChunk(long l);
+    public ChunkAccess getCustomChunk(long l);
 }

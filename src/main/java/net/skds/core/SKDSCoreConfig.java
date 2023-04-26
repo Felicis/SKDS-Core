@@ -1,6 +1,6 @@
 package net.skds.core;
 
-import java.io.File;
+import java.nio.file.Paths;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -32,9 +32,8 @@ public class SKDSCoreConfig {
     }
 
     public static void init() {
-        File dir = new File(System.getProperty("user.dir") + "\\config\\" + SKDSCore.MOD_ID);        
-		dir.mkdir();
-        ModLoadingContext.get().registerConfig(Type.COMMON, SPEC, SKDSCore.MOD_ID + "/main.toml");
+        Paths.get(System.getProperty("user.dir"), "config", SKDSCore.MOD_ID).toFile().mkdir();
+        ModLoadingContext.get().registerConfig(Type.COMMON, SPEC, Paths.get(SKDSCore.MOD_ID, "main.toml").toString());
         //ModLoadingContext.get().registerConfig(Type.COMMON, SPEC_WL, PhysEX.MOD_ID + "/waterlogged.toml");
     }
 }

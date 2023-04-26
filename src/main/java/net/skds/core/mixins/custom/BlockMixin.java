@@ -18,9 +18,9 @@ public class BlockMixin implements IBlockExtended, IBlockExtraStates {
 
 	private CustomBlockPars customBlockPars = new CustomBlockPars();
 
-	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;fillStateContainer(Lnet/minecraft/state/StateContainer$Builder;)V"))
+	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;createBlockStateDefinition(Lnet/minecraft/state/StateContainer$Builder;)V"))
 	protected void aaa(Block b, StateContainer.Builder<Block, BlockState> builder) {
-		fillStateContainer(builder);
+		createBlockStateDefinition(builder);
 		customStatesRegister(b, builder);
 	}
 
@@ -29,11 +29,11 @@ public class BlockMixin implements IBlockExtended, IBlockExtraStates {
 	}
 
 	@Shadow
-	protected final void setDefaultState(BlockState state) {
+	protected final void registerDefaultState(BlockState state) {
 	}
 
 	@Shadow
-	protected void fillStateContainer(Builder<Block, BlockState> builder) {
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
 	}
 
 	@Override

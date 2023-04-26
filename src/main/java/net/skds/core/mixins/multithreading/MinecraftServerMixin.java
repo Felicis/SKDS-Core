@@ -11,7 +11,7 @@ import net.skds.core.multithreading.MTHooks;
 @Mixin(value = { MinecraftServer.class })
 public class MinecraftServerMixin {
 
-    @Inject(method = "updateTimeLightAndEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/profiler/IProfiler;endStartSection(Ljava/lang/String;)V", ordinal = 1))
+    @Inject(method = "tickChildren", at = @At(value = "INVOKE", target = "Lnet/minecraft/profiler/IProfiler;popPush(Ljava/lang/String;)V", ordinal = 1))
     private void tickHook(CallbackInfo ci) {
         MTHooks.afterWorldsTick();
     }

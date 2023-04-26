@@ -17,24 +17,24 @@ public class PalettedContainerMixin<T> {
 	@Shadow
 	private final ReentrantLock lock = new ReentrantLock();
 
-	@Inject(method = "lock", at = @At(value = "HEAD"), cancellable = true)
-	public void lock(CallbackInfo ci) {
+	@Inject(method = "acquire", at = @At(value = "HEAD"), cancellable = true)
+	public void acquire(CallbackInfo ci) {
 		lock.lock();
 		ci.cancel();
 	}
 
 	@Inject(method = "get", at = @At(value = "HEAD"), cancellable = true)
-	public synchronized void lockedSwap(int x, int y, int z, CallbackInfoReturnable<T> ci) {
+	public synchronized void get(int x, int y, int z, CallbackInfoReturnable<T> ci) {
 
 		ci.setReturnValue(this.get(getIndex(x, y, z)));
 	}
 
 	//============================
-	@Inject(method = "lockedSwap", at = @At(value = "HEAD"), cancellable = true)
-	public synchronized void lockedSwap(int x, int y, int z, T state, CallbackInfoReturnable<T> ci) {
+	@Inject(method = "getAndSet", at = @At(value = "HEAD"), cancellable = true)
+	public synchronized void getAndSet(int x, int y, int z, T state, CallbackInfoReturnable<T> ci) {
 	
 		lock.lock();
-		T t = this.doSwap(getIndex(x, y, z), state);
+		T t = this.getAndSet(getIndex(x, y, z), state);
 		lock.unlock();
 		ci.setReturnValue(t);
 	}
@@ -45,7 +45,7 @@ public class PalettedContainerMixin<T> {
 	}
 
 	@Shadow
-	protected T doSwap(int index, T state) {
+	protected T getAndSet(int index, T state) {
 		return null;
 	}
 

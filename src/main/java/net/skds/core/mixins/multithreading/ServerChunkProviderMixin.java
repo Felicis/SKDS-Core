@@ -23,44 +23,44 @@ public abstract class ServerChunkProviderMixin implements IServerChunkProvider {
 
     @Final
     @Shadow
-    public ServerWorld world;
+    public ServerWorld level;
     @Final
     @Shadow
     private Thread mainThread;
 
     public IChunk getCustomChunk(long l) {
-        ChunkHolder chunkHolder = this.func_217213_a(l);
+        ChunkHolder chunkHolder = this.getVisibleChunkIfPresent(l);
         if (chunkHolder == null) {
             return null;
         }
-        return chunkHolder.func_219287_e();
+        return chunkHolder.getLastAvailable();
     }
 
     @Shadow
-    private ChunkHolder func_217213_a(long l) {
+    private ChunkHolder getVisibleChunkIfPresent(long l) {
         return null;
     }
-    
+
 	@Redirect(method = "getChunk", at = @At(value = "INVOKE", ordinal = 0, target = "Ljava/lang/Thread;currentThread()Ljava/lang/Thread;"))
 	public Thread aaa(int x, int z, ChunkStatus status, boolean b) {
 		return mainThread;
 	}
 
-    @Inject(method = "func_225315_a", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = "storeInCache", at = @At(value = "HEAD"), cancellable = true)
     private void swapp(long l, IChunk ic, ChunkStatus cs, CallbackInfo ci) {
         if (Thread.currentThread() != mainThread) {
             ci.cancel();
         }
     }
 
-	@Inject(method = "markBlockChanged", at = @At(value = "HEAD", ordinal = 0), cancellable = true)
-	public synchronized void markBlockChanged(BlockPos pos, CallbackInfo ci) {
+	@Inject(method = "blockChanged", at = @At(value = "HEAD", ordinal = 0), cancellable = true)
+	public synchronized void blockChanged(BlockPos pos, CallbackInfo ci) {
 		if (Thread.currentThread() instanceof ISKDSThread) {
 			int i = pos.getX() >> 4;
 			int j = pos.getZ() >> 4;
-			ChunkHolder chunkholder = this.func_217213_a(ChunkPos.asLong(i, j));
+			ChunkHolder chunkholder = this.getVisibleChunkIfPresent(ChunkPos.asLong(i, j));
 			if (chunkholder != null) {
-				chunkholder.func_244386_a(pos);
+				chunkholder.blockChanged(pos);
 			}
 			ci.cancel();
 		}

@@ -22,7 +22,7 @@ public class Events {
         World w = (World) e.getWorld();
         WWSGlobal wwsg = ((IWorldExtended) w).getWWS();
         wwsg.unloadWorld(w);
-        if (!w.isRemote) {
+        if (!w.isClientSide) {
             BlockUpdataer.onWorldUnload((ServerWorld) e.getWorld());
         }
     }
@@ -33,7 +33,7 @@ public class Events {
         World w = (World) e.getWorld();
         ((IWorldExtended) w).addWWS();
        // WWSGlobal.loadWorld(w);
-        if (!w.isRemote) {
+        if (!w.isClientSide) {
             BlockUpdataer.onWorldLoad((ServerWorld) w);
         }
     }

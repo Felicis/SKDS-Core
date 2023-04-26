@@ -57,7 +57,7 @@ public class UpdateTask {
 		//w.markAndNotifyBlock(pos, w.getChunkAt(pos), newState, newState, 3, 512);
 		//w.addParticle(ParticleTypes.CLOUD, pos.getX() + 0.5,  pos.getY() + 0.5,  pos.getZ() + 0.5, 0, 0, 0);
 		//w.notifyBlockUpdate(pos, oldState, newState, 2);
-		w.setBlockState(pos, newState);
+		w.setBlockAndUpdate(pos, newState);
 
 	}
 }

@@ -25,7 +25,7 @@ import net.skds.core.api.IWWS;
 
 public abstract class BasicExecutor implements Runnable {
 
-	protected final BlockState nullreturnstate = Blocks.BARRIER.getDefaultState();
+	protected final BlockState nullreturnstate = Blocks.BARRIER.defaultBlockState();
 	protected final ServerWorld w;
 	protected final IWWS owner;
 	protected final BiConsumer<UpdateTask, ServerWorld> action;
@@ -89,7 +89,7 @@ public abstract class BasicExecutor implements Runnable {
 		long lpos = ChunkPos.asLong(blockX >> 4, blockZ >> 4);
 		if (newChunkCash || lpos != chunkPosCash) {
 			newChunkCash = false;
-			ServerChunkProvider prov = (ServerChunkProvider) w.getChunkProvider();
+			ServerChunkProvider prov = (ServerChunkProvider) w.getChunkSource();
 			chunkCash = ((IServerChunkProvider) prov).getCustomChunk(lpos);
 			chunkPosCash = lpos;
 		}
@@ -143,7 +143,7 @@ public abstract class BasicExecutor implements Runnable {
 		TileEntity tileentity = null;
 
 		if (ich instanceof Chunk) {
-			tileentity = ((Chunk) getChunk(pos)).getTileEntity(pos, Chunk.CreateEntityType.IMMEDIATE);
+			tileentity = ((Chunk) getChunk(pos)).getBlockEntity(pos, Chunk.CreateEntityType.IMMEDIATE);
 		}
 
 		// if (tileentity == null) {
@@ -171,12 +171,12 @@ public abstract class BasicExecutor implements Runnable {
 
 	// ==============================
 	public static Direction dirFromVec(BlockPos pos1, BlockPos pos2) {
-		return Direction.getFacingFromVector(pos2.getX() - pos1.getX(), pos2.getY() - pos1.getY(),
+		return Direction.getNearest(pos2.getX() - pos1.getX(), pos2.getY() - pos1.getY(),
 				pos2.getZ() - pos1.getZ());
 	}
 
 	protected void debug(BlockPos pos) {
-		w.getPlayers().forEach((p) -> {
+		w.players().forEach((p) -> {
 			PacketHandler.send(PacketDistributor.PLAYER.with(() -> p), new DebugPacket(pos));
 		});
 	}

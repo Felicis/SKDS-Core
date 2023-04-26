@@ -86,10 +86,10 @@ public class WWSGlobal implements IWWSG {
 	}
 
 	private void updatePlayers() {
-		List<? extends PlayerEntity> playersss = world.getPlayers();
+		List<? extends PlayerEntity> playersss = world.players();
 		Set<BlockPos> np = new HashSet<>();
 		for (PlayerEntity p : playersss) {
-			BlockPos pos = p.getPosition();
+			BlockPos pos = p.blockPosition();
 			np.add(pos);
 		}
 		players = np;

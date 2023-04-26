@@ -127,9 +127,9 @@ public class BlockUpdataer {
     public static void onWorldUnload(ServerWorld w) {
         BLOCK_UPDATES_WORLDS.remove(w);
         entitiesToAdd.forEach((e) -> {
-            if (e.world == w) {
+            if (e.level == w) {
 
-                e.world.addEntity(e);
+                e.level.addFreshEntity(e);
                 entitiesToAdd.remove(e);
             }
         });
@@ -155,7 +155,7 @@ public class BlockUpdataer {
         if (in) {
 
             while ((e = entitiesToAdd.poll()) != null) {
-                e.world.addEntity(e);
+                e.level.addFreshEntity(e);
             }
             BLOCK_UPDATES_WORLDS.forEach((w, set) -> {
                 //w.getPlayers().forEach((p) -> {

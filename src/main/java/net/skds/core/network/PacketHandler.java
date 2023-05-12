@@ -1,9 +1,9 @@
 package net.skds.core.network;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fmllegacy.network.NetworkRegistry;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
-import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
 import net.skds.core.SKDSCore;
 
 public class PacketHandler {

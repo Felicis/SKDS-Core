@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Material;
@@ -17,7 +18,7 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 import net.skds.core.network.DebugPacket;
 import net.skds.core.network.PacketHandler;
 import net.skds.core.api.IServerChunkProvider;
@@ -120,13 +121,8 @@ public abstract class BasicExecutor implements Runnable {
 		if (!(chunk instanceof LevelChunk)) {
 			return null;
 		}
-		LevelChunkSection[] chunksections = chunk.getSections();
-		LevelChunkSection sec = chunksections[pos.getY() >> 4];
-		if (sec == null) {
-			sec = new LevelChunkSection(pos.getY() >> 4 << 4);
-			chunksections[pos.getY() >> 4] = sec;
-		}
-		BlockState setted = chunksections[pos.getY() >> 4].setBlockState(pos.getX() & 15, pos.getY() & 15,
+		LevelChunkSection levelChunkSection = chunk.getSection(chunk.getSectionIndex(pos.getY()));
+		BlockState setted = levelChunkSection.setBlockState(pos.getX() & 15, pos.getY() & 15,
 				pos.getZ() & 15, state);
 
 		return setted;

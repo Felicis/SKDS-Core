@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.world.entity.player.Player;
@@ -42,8 +43,8 @@ public class WWSGlobal implements IWWSG {
 	private Set<BlockPos> players = new HashSet<>();
 	private Map<Class<? extends IWWS>, IWWS> WWS = new HashMap<>();
 
-	private ConcurrentSet<Long> banPos = new ConcurrentSet<>();
-	private ConcurrentSet<Long> banPosOld = new ConcurrentSet<>();
+	private ConcurrentHashMap.KeySetView<Long, Boolean> banPos = ConcurrentHashMap.newKeySet();
+	private ConcurrentHashMap.KeySetView<Long, Boolean> banPosOld = ConcurrentHashMap.newKeySet();
 
 	public WWSGlobal(Level w) {
 		world = w;

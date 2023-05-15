@@ -8,38 +8,43 @@ buildscript {
            name = 'sponge'
            url = 'https://repo.spongepowered.org/maven'
         }
+        maven { url = 'https://maven.parchmentmc.org' }
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7.+'
+        classpath 'org.parchmentmc:librarian:1.+'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
+var mc_version = '1.16.5'
+var forge_version = '36.0.14'
+var modid = 'skds_core'
 version = '0.1.1'
 group = 'net.skds.core'
-archivesBaseName = 'skds_core'
+archivesBaseName = "skds_core-${mc_version}"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    mappings channel: 'official', version: '1.16.5'
+    mappings channel: 'official', version: "${mc_version}"
+//    mappings channel: 'parchment', version: "2022.03.06-${mc_version}"  // for some reason gradle sync hangs on this...
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.0.14'
+    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-    implementation fg.deobf(fileTree(dir: 'lib', include: ['*.jar']))
 }
 
 jar {
     manifest {
         attributes([
-            //"TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
-            "MixinConfigs": "mixins.skds_core.json",
+            "MixinConfigs": "mixins.${modid}.json",
             "Implementation-Title": project.name,
             "Implementation-Version": project.version,
         ])
@@ -49,6 +54,6 @@ jar {
 //jar.finalizedBy('reobfJar') 
 
 mixin {
-    add sourceSets.main, 'mixins.skds_core.refmap.json'
-    config 'mixins.wpo.json'
+    add sourceSets.main, "mixins.${modid}.refmap.json"
+    config "mixins.${modid}.json"
 }

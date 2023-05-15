@@ -8,18 +8,22 @@ buildscript {
            name = 'sponge'
            url = 'https://repo.spongepowered.org/maven'
         }
+        maven { url = 'https://maven.parchmentmc.org' }
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7.+'
+        classpath 'org.parchmentmc:librarian:1.+'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 var mc_version = '1.18.2'
 var forge_version = '40.2.0'
+var modid = 'skds_core'
 version = '0.3.0'
 group = 'net.skds.core'
 archivesBaseName = "skds_core-${mc_version}"
@@ -28,7 +32,8 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    mappings channel: 'official', version: "${mc_version}"
+//    mappings channel: 'official', version: "${mc_version}"
+    mappings channel: 'parchment', version: "2022.11.06-${mc_version}"
 }
 
 dependencies {
@@ -39,8 +44,7 @@ dependencies {
 jar {
     manifest {
         attributes([
-            //"TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
-            "MixinConfigs": "mixins.skds_core.json",
+            "MixinConfigs": "mixins.${modid}.json",
             "Implementation-Title": project.name,
             "Implementation-Version": project.version,
         ])
@@ -50,6 +54,6 @@ jar {
 //jar.finalizedBy('reobfJar') 
 
 mixin {
-    add sourceSets.main, 'mixins.skds_core.refmap.json'
-    config 'mixins.wpo.json'
+    add sourceSets.main, "mixins.${modid}.refmap.json"
+    config "mixins.${modid}.json"
 }

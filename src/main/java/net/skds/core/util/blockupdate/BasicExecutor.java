@@ -1,28 +1,26 @@
 package net.skds.core.util.blockupdate;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraftforge.network.PacketDistributor;
+import net.skds.core.api.IServerChunkProvider;
+import net.skds.core.api.IWWS;
+import net.skds.core.network.DebugPacket;
+import net.skds.core.network.PacketHandler;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
-
-import net.minecraft.core.SectionPos;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.chunk.LevelChunkSection;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.server.level.ServerChunkCache;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.network.PacketDistributor;
-import net.skds.core.network.DebugPacket;
-import net.skds.core.network.PacketHandler;
-import net.skds.core.api.IServerChunkProvider;
-import net.skds.core.api.IWWS;
 
 public abstract class BasicExecutor implements Runnable {
 
@@ -126,10 +124,6 @@ public abstract class BasicExecutor implements Runnable {
 				pos.getZ() & 15, state);
 
 		return setted;
-	}
-
-	protected boolean isAir(BlockState statex) {
-		return statex.getMaterial() == Material.AIR;
 	}
 
 	// ============== ENTITY ================= //

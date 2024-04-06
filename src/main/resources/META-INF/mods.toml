@@ -18,7 +18,7 @@ license="Unlicense"
 modId="skds_core" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
 version="${file.jarVersion}" #mandatory
- # A display name for the mod
+# A display name for the mod
 displayName="SKDS Core" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
 #updateJSONURL="" #optional
@@ -40,20 +40,20 @@ Is it really needed?
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.skds_core]] #optional
-    # the modid of the dependency
-    modId="forge" #mandatory
-    # Does this dependency have to exist - if not, ordering below must be specified
-    mandatory=true #mandatory
-    # The version range of the dependency
-    versionRange="[40,)" #mandatory
-    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
-    ordering="NONE"
-    # Side this dependency is applied on - BOTH, CLIENT or SERVER
-    side="BOTH"
+# the modid of the dependency
+modId="forge" #mandatory
+# Does this dependency have to exist - if not, ordering below must be specified
+mandatory=true #mandatory
+# The version range of the dependency
+versionRange="[40,)" #mandatory
+# An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+ordering="NONE"
+# Side this dependency is applied on - BOTH, CLIENT or SERVER
+side="BOTH"
 # Here's another dependency
 [[dependencies.skds_core]]
-    modId="minecraft"
-    mandatory=true
-    versionRange="[1.18, 1.19)"
-    ordering="NONE"
-    side="BOTH"
+modId="minecraft"
+mandatory=true
+versionRange="[1.20, 1.21)"
+ordering="NONE"
+side="BOTH"

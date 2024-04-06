@@ -1,11 +1,11 @@
 package net.skds.core;
 
-import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.event.TickEvent.LevelTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
-import net.minecraftforge.event.TickEvent.WorldTickEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.skds.core.api.IWorldExtended;
 import net.skds.core.util.blockupdate.BlockUpdataer;
@@ -17,37 +17,37 @@ public class Events {
     private static int lastTickTime = 0;
 
     @SubscribeEvent
-    public void onWorldUnload(WorldEvent.Unload e) {
+    public void onWorldUnload(LevelEvent.Unload e) {
 
-        Level w = (Level) e.getWorld();
+        Level w = (Level) e.getLevel();
         WWSGlobal wwsg = ((IWorldExtended) w).getWWS();
         wwsg.unloadWorld(w);
         if (!w.isClientSide) {
-            BlockUpdataer.onWorldUnload((ServerLevel) e.getWorld());
+            BlockUpdataer.onWorldUnload((ServerLevel) e.getLevel());
         }
     }
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load e) {
+    public void onWorldLoad(LevelEvent.Load e) {
 
-        Level w = (Level) e.getWorld();
+        Level w = (Level) e.getLevel();
         ((IWorldExtended) w).addWWS();
-       // WWSGlobal.loadWorld(w);
+        // WWSGlobal.loadWorld(w);
         if (!w.isClientSide) {
             BlockUpdataer.onWorldLoad((ServerLevel) w);
         }
     }
 
     @SubscribeEvent
-    public void tick(WorldTickEvent event) {
+    public void tick(LevelTickEvent event) {
 
         boolean in = event.phase == Phase.START;
-        Level w = event.world;
+        Level w = event.level;
         if (in) {
             //System.out.println("W I ========================");
             WWSGlobal wwsg = ((IWorldExtended) w).getWWS();
             wwsg.tickIn();
-            
+
         }
         //BlockUpdataer.tick(in);
         if (!in) {
